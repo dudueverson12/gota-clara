@@ -91,12 +91,13 @@
     margin-top: 1.5rem;
   }
   .fim button { flex: 1; }
+  .nav, .fim, #titulo { display: none; }
 </style>
 </head>
 <body>
 <header>
   <h1>Gota Clara</h1>
-  <p>capítulos 1 a 500, texto.</p>
+  <p>páginas em sequência.</p>
 </header>
 <nav class="nav" aria-label="Capítulos">
   <button type="button" id="anterior">Anterior</button>
@@ -115,95 +116,17 @@
 <script>
 (function () {
   var lista = window.CAPITULOS || [];
-  var chave = "gota-clara-capitulo";
-  var titulo = document.getElementById("titulo");
   var texto = document.getElementById("texto");
-  var ir = document.getElementById("ir");
-  var anterior = document.getElementById("anterior");
-  var proximo = document.getElementById("proximo");
-  var anterior2 = document.getElementById("anterior2");
-  var proximo2 = document.getElementById("proximo2");
-
+  var html = "";
   lista.forEach(function (cap) {
-    var opt = document.createElement("option");
-    opt.value = String(cap.n);
-    opt.textContent = cap.n + ". " + cap.title;
-    ir.appendChild(opt);
+    if (!(cap.pages > 0)) return;
+    var i;
+    for (i = 1; i <= cap.pages; i++) {
+      var nn = i < 10 ? "0" + i : String(i);
+      html += '<img src="paginas/' + cap.n + '/page-' + nn + '.jpg" alt="Capítulo ' + cap.n + ', página ' + i + '">';
+    }
   });
-
-  function escapar(s) {
-    return s
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  }
-
-  function paragrafo(s) {
-    var html = escapar(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-    var cls = s.charAt(0) === "\u2014" ? "fala" : "";
-    return '<p class="' + cls + '">' + html + "</p>";
-  }
-
-  function mostrar(n, gravar) {
-    n = Number(n);
-    if (!lista.length || n < 1) n = 1;
-    if (n > lista.length) n = lista.length;
-    var cap = lista[n - 1];
-    if (!cap || cap.n !== n) {
-      cap = lista.find(function (c) { return c.n === n; }) || lista[0];
-      n = cap.n;
-    }
-    document.title = "Gota Clara";
-    titulo.textContent = "Capítulo " + cap.n + " — " + cap.title;
-    texto.innerHTML = cap.paragraphs.map(paragrafo).join("");
-    if (cap.pages > 0) {
-      var imgs = "";
-      var i;
-      for (i = 1; i <= cap.pages; i++) {
-        var nn = i < 10 ? "0" + i : String(i);
-        imgs += '<img src="paginas/' + cap.n + '/page-' + nn + '.jpg" alt="Capítulo ' + cap.n + ', página ' + i + '">';
-      }
-      texto.insertAdjacentHTML("afterbegin", imgs);
-    }
-    ir.value = String(n);
-    var noInicio = n <= 1;
-    var noFim = n >= lista.length;
-    anterior.disabled = anterior2.disabled = noInicio;
-    proximo.disabled = proximo2.disabled = noFim;
-    if (gravar) {
-      try { localStorage.setItem(chave, String(n)); } catch (e) {}
-      if (location.hash !== "#c" + n) {
-        history.replaceState(null, "", "#c" + n);
-      }
-    }
-    window.scrollTo(0, 0);
-  }
-
-  function atual() {
-    var m = (location.hash || "").match(/^#c(\d+)$/);
-    if (m) return Number(m[1]);
-    try {
-      var salvo = Number(localStorage.getItem(chave));
-      if (salvo >= 1) return salvo;
-    } catch (e) {}
-    return 1;
-  }
-
-  anterior.addEventListener("click", function () { mostrar(atual() - 1, true); });
-  anterior2.addEventListener("click", function () { mostrar(atual() - 1, true); });
-  proximo.addEventListener("click", function () { mostrar(atual() + 1, true); });
-  proximo2.addEventListener("click", function () { mostrar(atual() + 1, true); });
-  ir.addEventListener("change", function () { mostrar(ir.value, true); });
-  window.addEventListener("hashchange", function () { mostrar(atual(), true); });
-
-  mostrar(atual(), false);
-  try {
-    if (!location.hash) {
-      var salvo = localStorage.getItem(chave);
-      if (salvo) mostrar(salvo, false);
-    }
-  } catch (e) {}
+  texto.innerHTML = html;
 })();
 </script>
 </body>
