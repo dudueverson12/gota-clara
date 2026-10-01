@@ -79,11 +79,16 @@
   p { margin: 0 0 0.95rem; font-size: 1.05rem; }
   p.fala { margin-left: 0; }
   strong { font-weight: 700; }
+  main { padding: 0; }
+  #texto { margin: 0; padding: 0; line-height: 0; }
   #texto img {
+    display: block;
     width: 100%;
     height: auto;
-    display: block;
-    margin: 0 0 0.75rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    vertical-align: top;
   }
   .fim {
     display: flex;
@@ -91,7 +96,7 @@
     margin-top: 1.5rem;
   }
   .fim button { flex: 1; }
-  .nav, .fim, #titulo { display: none; }
+  header, .nav, .fim, #titulo { display: none; }
 </style>
 </head>
 <body>
@@ -123,7 +128,7 @@
     var i;
     for (i = 1; i <= cap.pages; i++) {
       var nn = i < 10 ? "0" + i : String(i);
-      html += '<img src="paginas/' + cap.n + '/page-' + nn + '.jpg" alt="Capítulo ' + cap.n + ', página ' + i + '">';
+      html += '<img src="paginas/' + cap.n + '/page-' + nn + '.jpg" alt="">';
     }
   });
   texto.innerHTML = html;
